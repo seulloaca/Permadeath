@@ -1,0 +1,13 @@
+name: Permadeath
+version: 1.3
+main: tech.sebazcrc.permadeath.Main
+softdepend: [ WorldEdit ]
+load: STARTUP
+api-version: 1.15
+authors: [ SebazCRC, vo1d_dev ]
+description: Recreación del Plugin "PermaDeath" de la serie de ElRichMC, este plugin no intenta reemplazar al original sino crear una copia similar para la comunidad.
+website: https://github.com/SebazCRC
+commands:
+  pdc:
+    description: Comando principal de Permadeath
+    aliase: permadeath

@@ -1,0 +1,13 @@
+# Configuración de mensajes para el idioma español
+Server-Messages:
+  OnJoin: '&e%player% se ha unido al servidor'
+  OnLeave: '&e%player% se ha desconectado del servidor'
+  StormEnd: '&cLa tormenta ha llegado a su fin'
+  Sleep: '&7%player% &efue a dormir.'
+  Sleeping: '&7%player% &eestá durmiendo &e(&b%players%&7/&b%needed%&e)'
+  DeathMessageTitle: '&c¡Permadeath!'
+  DeathMessageSubtitle: '%player% ha muerto'
+  DeathMessageChat: '&c&lEste es el comienzo del sufrimiento eterno de &4&l%player%&c&l. ¡HA SIDO PERMABANEADO!'
+  DeathTrainMessage: '&c¡Comienza el Death Train con duración de %tiempo% horas!'
+  DeathTrainMessageMinutes: '&c¡Comienza el Death Train con duración de %tiempo% minutos!'
+  ActionBarMessage: '&7Quedan %tiempo% de tormenta'
