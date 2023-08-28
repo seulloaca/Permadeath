@@ -1,4 +1,4 @@
-package tech.sebazcrc.permadeath.util.manager.Data;
+package tech.sebazcrc.permadeath.data;
 
 import org.bukkit.configuration.InvalidConfigurationException;
 import org.bukkit.configuration.file.FileConfiguration;

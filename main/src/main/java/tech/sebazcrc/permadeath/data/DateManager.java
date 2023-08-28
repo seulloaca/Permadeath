@@ -1,4 +1,4 @@
-package tech.sebazcrc.permadeath.util.manager.Data;
+package tech.sebazcrc.permadeath.data;
 
 import org.bukkit.Bukkit;
 import org.bukkit.OfflinePlayer;
@@ -7,7 +7,7 @@ import org.bukkit.configuration.InvalidConfigurationException;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.configuration.file.YamlConfiguration;
 import tech.sebazcrc.permadeath.Main;
-import tech.sebazcrc.permadeath.util.manager.Log.PDCLog;
+import tech.sebazcrc.permadeath.util.log.PDCLog;
 import tech.sebazcrc.permadeath.util.TextUtils;
 import tech.sebazcrc.permadeath.discord.DiscordPortal;
 

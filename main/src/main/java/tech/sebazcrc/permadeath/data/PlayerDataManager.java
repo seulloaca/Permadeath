@@ -1,4 +1,4 @@
-package tech.sebazcrc.permadeath.util.manager.Data;
+package tech.sebazcrc.permadeath.data;
 
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
@@ -9,7 +9,7 @@ import org.bukkit.event.entity.EntityDamageEvent;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 import tech.sebazcrc.permadeath.Main;
-import tech.sebazcrc.permadeath.data.Language;
+import tech.sebazcrc.permadeath.Language;
 import tech.sebazcrc.permadeath.util.TextUtils;
 
 import java.io.File;

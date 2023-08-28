@@ -1,16 +1,19 @@
-package tech.sebazcrc.permadeath.nms.v1_15_R1;
+package tech.sebazcrc.permadeath.nms.v1_16_R3;
 
-import tech.sebazcrc.permadeath.Main;
-import tech.sebazcrc.permadeath.nms.v1_15_R1.entity.CustomGhast;
-import tech.sebazcrc.permadeath.util.NMS;
-import tech.sebazcrc.permadeath.util.interfaces.NMSHandler;
-import net.minecraft.server.v1_15_R1.*;
+import net.minecraft.server.v1_16_R3.*;
 import org.bukkit.Location;
 import org.bukkit.NamespacedKey;
-import org.bukkit.craftbukkit.v1_15_R1.CraftWorld;
-import org.bukkit.entity.*;
+import org.bukkit.craftbukkit.v1_16_R3.CraftWorld;
+import org.bukkit.craftbukkit.v1_16_R3.util.CraftChatMessage;
+import org.bukkit.entity.Entity;
+import org.bukkit.entity.EntityType;
+import org.bukkit.entity.LivingEntity;
 import org.bukkit.event.entity.CreatureSpawnEvent;
 import org.bukkit.persistence.PersistentDataType;
+import tech.sebazcrc.permadeath.Main;
+import tech.sebazcrc.permadeath.nms.v1_16_R3.entity.CustomGhast;
+import tech.sebazcrc.permadeath.util.NMS;
+import tech.sebazcrc.permadeath.util.interfaces.NMSHandler;
 
 import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
@@ -23,7 +26,7 @@ public class NMSHandlerImpl implements NMSHandler {
     @Override
     public Class<?> getNMSClass(String name) {
         try {
-            return Class.forName("net.minecraft.server.v1_15_R1." + name);
+            return Class.forName("net.minecraft.server.v1_16_R3." + name);
         } catch (ClassNotFoundException e) {
             e.printStackTrace();
             return null;
@@ -57,8 +60,8 @@ public class NMSHandlerImpl implements NMSHandler {
         if (type == EntityType.PIG) {
             return EntityTypes.PIG;
         }
-        if (type == EntityType.PIG_ZOMBIE) {
-            return EntityTypes.ZOMBIE_PIGMAN;
+        if (type == EntityType.ZOMBIFIED_PIGLIN) {
+            return EntityTypes.ZOMBIFIED_PIGLIN;
         }
         if (type == EntityType.SHEEP) {
 
@@ -287,52 +290,53 @@ public class NMSHandlerImpl implements NMSHandler {
         }
 
         if (type == EntityType.HUSK) {
-
             return EntityTypes.HUSK;
         }
-
         if (type == EntityType.STRAY) {
-
             return EntityTypes.STRAY;
         }
-
         if (type == EntityType.PHANTOM) {
-
             return EntityTypes.PHANTOM;
+        }
+        if (type == EntityType.STRIDER) {
+            return EntityTypes.STRIDER;
+        }
+        if (type == EntityType.PIGLIN) {
+            return EntityTypes.PIGLIN;
+        }
+        if (type == EntityType.ZOGLIN) {
+            return EntityTypes.ZOGLIN;
+        }
+        if (type == EntityType.HOGLIN) {
+            return EntityTypes.HOGLIN;
+        }
+        if (type == EntityType.PIGLIN_BRUTE) {
+            return EntityTypes.PIGLIN_BRUTE;
         }
         return null;
     }
 
     @Override
-    public org.bukkit.entity.Entity spawnNMSEntity(String name, EntityType type, Location location, CreatureSpawnEvent.SpawnReason reason) {
+    public Entity spawnNMSEntity(String name, EntityType type, Location location, CreatureSpawnEvent.SpawnReason reason) {
         if (
                 (type != EntityType.BAT && type != EntityType.COD && type != EntityType.SALMON && type != EntityType.SQUID && type != EntityType.PUFFERFISH && type != EntityType.TROPICAL_FISH)
                         || (reason != CreatureSpawnEvent.SpawnReason.SPAWNER_EGG || Math.random() <= 0.02004008016)) {
-            try {
-                World nmsWorld = ((CraftWorld) Objects.requireNonNull(location.getWorld())).getHandle();
-                net.minecraft.server.v1_15_R1.Entity nmsEntity = (net.minecraft.server.v1_15_R1.Entity) getNMSClass("Entity" + name).getConstructor(getNMSClass("EntityTypes"), getNMSClass("World")).newInstance(convertBukkitToNMS(type), nmsWorld);
-                nmsEntity.setPositionRotation(location.getX(), location.getY(), location.getZ(), location.getYaw(), location.getPitch());
-                nmsWorld.addEntity(nmsEntity, reason);
 
-                return nmsEntity.getBukkitEntity();
-
-            } catch (NoSuchMethodException | IllegalAccessException | InvocationTargetException |
-                     InstantiationException ignored) {
-            }
+            EntityTypes<?> nms = convertBukkitToNMS(type);
+            return nms.spawnCreature(((CraftWorld) Objects.requireNonNull(location.getWorld())).getHandle(), null, null, null, new BlockPosition(location.getBlockX(), location.getBlockY(), location.getBlockZ()), EnumMobSpawn.NATURAL, false, false, reason).getBukkitEntity();
         }
 
         return null;
     }
 
     @Override
-    public org.bukkit.entity.Entity spawnNMSCustomEntity(String classPath, EntityType type, Location location, CreatureSpawnEvent.SpawnReason reason) {
+    public Entity spawnNMSCustomEntity(String classPath, EntityType type, Location location, CreatureSpawnEvent.SpawnReason reason) {
         World nmsWorld = ((CraftWorld) Objects.requireNonNull(location.getWorld())).getHandle();
-        net.minecraft.server.v1_15_R1.Entity nmsEntity = null;
+        net.minecraft.server.v1_16_R3.Entity nmsEntity = null;
 
         try {
             Class<?> c = Class.forName(NMS.search("entity." + classPath));
-            nmsEntity = (net.minecraft.server.v1_15_R1.Entity) c.getConstructor(Location.class).newInstance(location);
-
+            nmsEntity = (net.minecraft.server.v1_16_R3.Entity) c.getConstructor(Location.class).newInstance(location);
         } catch (NoSuchMethodException | ClassNotFoundException | IllegalAccessException | InstantiationException |
                  InvocationTargetException ignored) {
         }
@@ -345,7 +349,7 @@ public class NMSHandlerImpl implements NMSHandler {
     }
 
     @Override
-    public org.bukkit.entity.Entity spawnCustomGhast(Location location, CreatureSpawnEvent.SpawnReason reason, boolean isEnder) {
+    public Entity spawnCustomGhast(Location location, CreatureSpawnEvent.SpawnReason reason, boolean isEnder) {
 
         World nmsW = ((CraftWorld) Objects.requireNonNull(location.getWorld())).getHandle();
         CustomGhast nmsEntity = new CustomGhast(EntityTypes.GHAST, nmsW);
@@ -354,13 +358,10 @@ public class NMSHandlerImpl implements NMSHandler {
         nmsW.addEntity(nmsEntity, reason);
 
         if (isEnder) {
-
             nmsEntity.getAttributeInstance(GenericAttributes.MAX_HEALTH).setValue(100.0D);
-            LivingEntity e2 = (LivingEntity) nmsEntity.getBukkitEntity();
-            e2.setHealth(100.0D);
-            e2.setCustomName("§6Ender Ghast");
-            e2.getPersistentDataContainer().set(new NamespacedKey(Main.getInstance(), "ender_ghast"), PersistentDataType.BYTE, (byte) 1);
-            e2.setCustomNameVisible(false);
+            nmsEntity.setHealth(100.0F);
+            nmsEntity.setCustomName(CraftChatMessage.fromStringOrNull("§6Ender Ghast"));
+            nmsEntity.getBukkitEntity().getPersistentDataContainer().set(new NamespacedKey(Main.getInstance(), "ender_ghast"), PersistentDataType.BYTE, (byte) 1);
         }
 
         return nmsEntity.getBukkitEntity();
@@ -372,26 +373,5 @@ public class NMSHandlerImpl implements NMSHandler {
         /**
          * Esto hay que cambiarlo XD
          */
-        Class<BiomeBase> c = BiomeBase.class;
-
-        try {
-            BiomeMushrooms m = BiomeMushrooms.class.getConstructor().newInstance();
-
-            final Field f = c.getDeclaredField("v");
-            f.setAccessible(true);
-
-            final Map<EnumCreatureType, List<BiomeBase.BiomeMeta>> v = (Map<EnumCreatureType, List<BiomeBase.BiomeMeta>>) f.get(m);
-
-            v.get(EnumCreatureType.MONSTER).add(new BiomeBase.BiomeMeta(EntityTypes.SPIDER, 100, 4, 4));
-            v.get(EnumCreatureType.MONSTER).add(new BiomeBase.BiomeMeta(EntityTypes.ZOMBIE, 95, 4, 4));
-            v.get(EnumCreatureType.MONSTER).add(new BiomeBase.BiomeMeta(EntityTypes.ZOMBIE_VILLAGER, 5, 1, 1));
-            v.get(EnumCreatureType.MONSTER).add(new BiomeBase.BiomeMeta(EntityTypes.SKELETON, 100, 4, 4));
-            v.get(EnumCreatureType.MONSTER).add(new BiomeBase.BiomeMeta(EntityTypes.CREEPER, 100, 4, 4));
-            v.get(EnumCreatureType.MONSTER).add(new BiomeBase.BiomeMeta(EntityTypes.SLIME, 100, 4, 4));
-            v.get(EnumCreatureType.MONSTER).add(new BiomeBase.BiomeMeta(EntityTypes.ENDERMAN, 10, 1, 4));
-            v.get(EnumCreatureType.MONSTER).add(new BiomeBase.BiomeMeta(EntityTypes.WITCH, 5, 1, 1));
-
-            f.set(m, v);
-        } catch (Exception e) {}
     }
 }

@@ -1,4 +1,4 @@
-package tech.sebazcrc.permadeath.util.manager.Log;
+package tech.sebazcrc.permadeath.util.log;
 
 import org.apache.logging.log4j.Marker;
 import org.apache.logging.log4j.core.LogEvent;

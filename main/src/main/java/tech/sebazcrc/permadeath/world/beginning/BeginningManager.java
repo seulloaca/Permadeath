@@ -1,5 +1,6 @@
 package tech.sebazcrc.permadeath.world.beginning;
 
+import lombok.Getter;
 import org.bukkit.*;
 import org.bukkit.block.*;
 import org.bukkit.entity.*;
@@ -19,7 +20,7 @@ import org.bukkit.event.world.PortalCreateEvent;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.persistence.PersistentDataType;
 import tech.sebazcrc.permadeath.Main;
-import tech.sebazcrc.permadeath.util.manager.Data.BeginningDataManager;
+import tech.sebazcrc.permadeath.data.BeginningDataManager;
 import tech.sebazcrc.permadeath.util.TextUtils;
 import tech.sebazcrc.permadeath.world.WorldEditPortal;
 import tech.sebazcrc.permadeath.world.beginning.generator.BeginningGenerator;
@@ -31,6 +32,7 @@ public class BeginningManager implements Listener {
     private World beginningWorld;
 
     private BeginningDataManager data;
+    @Getter
     private boolean closed = false;
 
     public BeginningManager(Main main) {
@@ -295,20 +297,11 @@ public class BeginningManager implements Listener {
         }
     }
 
-    public boolean isClosed() {
-        return closed;
-    }
-
     public void setClosed(boolean closed) {
         this.closed = closed;
     }
 
     public void generatePortal(boolean overworld, Location location) {
-        if (!isWorldEditEnabled()) return;
         WorldEditPortal.generatePortal(overworld, location);
-    }
-
-    public boolean isWorldEditEnabled() {
-        return Bukkit.getPluginManager().getPlugin("WorldEdit") != null;
     }
 }

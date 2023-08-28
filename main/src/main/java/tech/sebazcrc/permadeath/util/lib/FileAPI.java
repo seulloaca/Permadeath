@@ -30,16 +30,20 @@ public class FileAPI {
 
         private void saveFile(Plugin plugin, @NotNull String resourcePath, String outPath, boolean replace) {
 
-            if (resourcePath != null && !resourcePath.equals("")) {
+            if (!resourcePath.isEmpty()) {
                 resourcePath = resourcePath.replace('\\', '/');
                 InputStream in = plugin.getResource(resourcePath);
                 if (in == null) {
                 } else {
-                    File outFile = new File(plugin.getDataFolder(), outPath + resourcePath);
-                    int lastIndex = resourcePath.lastIndexOf(47);
-                    File outDir = new File(plugin.getDataFolder(), outPath + resourcePath.substring(0, lastIndex >= 0 ? lastIndex : 0));
-                    if (!outDir.exists()) {
-                        outDir.mkdirs();
+                    int lastIndex = resourcePath.lastIndexOf(47); // "/"
+                    String finalPath = outPath + resourcePath.substring(Math.max(0, lastIndex));
+
+                    File outFile = new File(plugin.getDataFolder(), finalPath);
+
+                    if (outFile.isDirectory()) {
+                        outFile.mkdirs();
+                    } else {
+                        if (outFile.getParentFile() != null) outFile.getParentFile().mkdirs();
                     }
 
                     try {

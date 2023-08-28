@@ -26,16 +26,16 @@ import tech.sebazcrc.permadeath.util.item.NetheriteArmor;
 import tech.sebazcrc.permadeath.util.item.PermadeathItems;
 import tech.sebazcrc.permadeath.util.lib.FileAPI;
 import tech.sebazcrc.permadeath.util.lib.UpdateChecker;
-import tech.sebazcrc.permadeath.util.manager.Data.BeginningDataManager;
-import tech.sebazcrc.permadeath.util.manager.Data.DateManager;
-import tech.sebazcrc.permadeath.util.manager.Data.EndDataManager;
-import tech.sebazcrc.permadeath.util.manager.Data.PlayerDataManager;
-import tech.sebazcrc.permadeath.util.manager.Log.Log4JFilter;
-import tech.sebazcrc.permadeath.util.manager.Log.PDCLog;
-import tech.sebazcrc.permadeath.util.manager.RecipeManager;
+import tech.sebazcrc.permadeath.data.BeginningDataManager;
+import tech.sebazcrc.permadeath.data.DateManager;
+import tech.sebazcrc.permadeath.data.EndDataManager;
+import tech.sebazcrc.permadeath.data.PlayerDataManager;
+import tech.sebazcrc.permadeath.util.log.Log4JFilter;
+import tech.sebazcrc.permadeath.util.log.PDCLog;
+import tech.sebazcrc.permadeath.util.item.RecipeManager;
 import tech.sebazcrc.permadeath.discord.DiscordPortal;
 import tech.sebazcrc.permadeath.end.EndManager;
-import tech.sebazcrc.permadeath.event.block.BlockEvents;
+import tech.sebazcrc.permadeath.event.block.BlockListener;
 import tech.sebazcrc.permadeath.event.entity.EntityEvents;
 import tech.sebazcrc.permadeath.util.mob.CustomSkeletons;
 import tech.sebazcrc.permadeath.event.entity.SpawnListener;
@@ -72,6 +72,7 @@ public final class Main extends JavaPlugin implements Listener {
     public static String prefix = "";
     @Getter
     public static boolean runningPaperSpigot = false;
+    public static boolean worldEditFound;
     private final SplittableRandom random = new SplittableRandom();
     public World world = null;
     public World endWorld = null;
@@ -108,8 +109,6 @@ public final class Main extends JavaPlugin implements Listener {
 
         this.saveDefaultConfig();
         setupConsoleFilter();
-        setupListeners();
-        setupCommands();
 
         prefix = TextUtils.format((getConfig().contains("Prefix") ? getConfig().getString("Prefix") : "&cPermadeath &7➤ &f"));
 
@@ -511,39 +510,46 @@ public final class Main extends JavaPlugin implements Listener {
         this.orbEvent = new LifeOrbEvent(this);
         this.factory = new MobFactory(this);
 
-        new FileAPI.FileOut(instance, "beginning_portal.schem", "schematics/", true);
-        new FileAPI.FileOut(instance, "ytic.schem", "schematics/", true);
-        new FileAPI.FileOut(instance, "island1.schem", "schematics/", true);
-        new FileAPI.FileOut(instance, "island2.schem", "schematics/", true);
-        new FileAPI.FileOut(instance, "island3.schem", "schematics/", true);
-        new FileAPI.FileOut(instance, "island4.schem", "schematics/", true);
-        new FileAPI.FileOut(instance, "island5.schem", "schematics/", true);
+        if (VersionManager.getMinecraftVersion().isAboveOrEqual(MinecraftVersion.v1_20_R1)) {
+            // Schematics nuevas
+            new FileAPI.FileOut(instance, "updated_schematics/beginning_portal.schem", "schematics/", true);
+            new FileAPI.FileOut(instance, "updated_schematics/ytic.schem", "schematics/", true);
+            new FileAPI.FileOut(instance, "updated_schematics/island1.schem", "schematics/", true);
+            new FileAPI.FileOut(instance, "updated_schematics/island2.schem", "schematics/", true);
+            new FileAPI.FileOut(instance, "updated_schematics/island3.schem", "schematics/", true);
+            new FileAPI.FileOut(instance, "updated_schematics/island4.schem", "schematics/", true);
+            new FileAPI.FileOut(instance, "updated_schematics/island5.schem", "schematics/", true);
+        } else {
+            new FileAPI.FileOut(instance, "original_schematics/beginning_portal.schem", "schematics/", true);
+            new FileAPI.FileOut(instance, "original_schematics/ytic.schem", "schematics/", true);
+            new FileAPI.FileOut(instance, "original_schematics/island1.schem", "schematics/", true);
+            new FileAPI.FileOut(instance, "original_schematics/island2.schem", "schematics/", true);
+            new FileAPI.FileOut(instance, "original_schematics/island3.schem", "schematics/", true);
+            new FileAPI.FileOut(instance, "original_schematics/island4.schem", "schematics/", true);
+            new FileAPI.FileOut(instance, "original_schematics/island5.schem", "schematics/", true);
+        }
 
         int HelmetValue = Integer.parseInt(Objects.requireNonNull(instance.getConfig().getString("Toggles.Netherite.Helmet")));
         int ChestplateValue = Integer.parseInt(Objects.requireNonNull(instance.getConfig().getString("Toggles.Netherite.Chestplate")));
         int LeggingsValue = Integer.parseInt(Objects.requireNonNull(instance.getConfig().getString("Toggles.Netherite.Leggings")));
         int BootsValue = Integer.parseInt(Objects.requireNonNull(instance.getConfig().getString("Toggles.Netherite.Boots")));
         if (HelmetValue > 100 || HelmetValue < 1) {
-            System.out.println("[ERROR] Error al cargar la probabilidad de 'Helmet' en 'config.yml', asegurate de introducir un numero valido del 1 al 100.");
-            System.out.println("[ERROR] Ha ocurrido un error al cargar el archivo config.yml, si este error persiste avisanos por discord.");
+            PDCLog.getInstance().log("[ERROR] Error al cargar la probabilidad de 'Helmet' en 'config.yml', asegurate de introducir un numero valido del 1 al 100.", true);
+            PDCLog.getInstance().log("[ERROR] Ha ocurrido un error al cargar el archivo config.yml, si este error persiste avisanos por discord.", true);
         }
         if (ChestplateValue > 100 || ChestplateValue < 1) {
-            System.out.println("[ERROR] Error al cargar la probabilidad de 'Chestplate' en 'config.yml', asegurate de introducir un numero valido del 1 al 100.");
-            System.out.println("[ERROR] Ha ocurrido un error al cargar el archivo config.yml, si este error persiste avisanos por discord.");
+            PDCLog.getInstance().log("[ERROR] Error al cargar la probabilidad de 'Chestplate' en 'config.yml', asegurate de introducir un numero valido del 1 al 100.", true);
+            PDCLog.getInstance().log("[ERROR] Ha ocurrido un error al cargar el archivo config.yml, si este error persiste avisanos por discord.", true);
         }
         if (LeggingsValue > 100 || LeggingsValue < 1) {
-            System.out.println("[ERROR] Error al cargar la probabilidad de 'Leggings' en 'config.yml', asegurate de introducir un numero valido del 1 al 100.");
-            System.out.println("[ERROR] Ha ocurrido un error al cargar el archivo config.yml, si este error persiste avisanos por discord.");
+            PDCLog.getInstance().log("[ERROR] Error al cargar la probabilidad de 'Leggings' en 'config.yml', asegurate de introducir un numero valido del 1 al 100.", true);
+            PDCLog.getInstance().log("[ERROR] Ha ocurrido un error al cargar el archivo config.yml, si este error persiste avisanos por discord.", true);
         }
         if (BootsValue > 100 || BootsValue < 1) {
-            System.out.println("[ERROR] Error al cargar la probabilidad de 'BootsValue' en 'config.yml', asegurate de introducir un numero valido del 1 al 100.");
-            System.out.println("[ERROR] Ha ocurrido un error al cargar el archivo config.yml, si este error persiste avisanos por discord.");
+            PDCLog.getInstance().log("[ERROR] Error al cargar la probabilidad de 'BootsValue' en 'config.yml', asegurate de introducir un numero valido del 1 al 100.", true);
+            PDCLog.getInstance().log("[ERROR] Ha ocurrido un error al cargar el archivo config.yml, si este error persiste avisanos por discord.", true);
         }
-        String compatibleVersion = "&cIncompatible";
-
-        if (VersionManager.getMinecraftVersion() != null) {
-            compatibleVersion = "&aCompatible";
-        }
+        String compatibleVersion = VersionManager.getVersion() != null ? ("&aCompatible") : "&cIncompatible";
 
         String software = "";
         try {
@@ -576,9 +582,10 @@ public final class Main extends JavaPlugin implements Listener {
         Bukkit.getConsoleSender().sendMessage(TextUtils.format("&7> &bEstado de Compatibilidad: " + compatibleVersion));
         Bukkit.getConsoleSender().sendMessage(TextUtils.format("&7> &bSoftware: " + software));
         Bukkit.getConsoleSender().sendMessage(TextUtils.format("&7> &b&lCambios:"));
-        Bukkit.getConsoleSender().sendMessage(TextUtils.format("&7>   &aDías: &71-60"));
+        Bukkit.getConsoleSender().sendMessage(TextUtils.format("&7>   &aDías disponibles: &71-60"));
 
-        if (Bukkit.getPluginManager().getPlugin("WorldEdit") == null) {
+        worldEditFound = (Bukkit.getPluginManager().getPlugin("WorldEdit") != null || Bukkit.getPluginManager().getPlugin("FastAsyncWorldEdit") != null);
+        if (!worldEditFound) {
             Bukkit.getConsoleSender().sendMessage(TextUtils.format("&7> &4&lADVERTENCIA: &7No se ha encontrado el plugin &7World Edit"));
             Bukkit.getConsoleSender().sendMessage(TextUtils.format("&7> &7Algunas funciones pueden no funcionar correctamente. Ten en cuenta que las estructuras de The Beginning no podrán ser generadas en días avanzados."));
             PDCLog.getInstance().log("No se encontró WorldEdit");
@@ -591,9 +598,12 @@ public final class Main extends JavaPlugin implements Listener {
             return;
         }
 
+        setupListeners();
+        setupCommands();
+
         new UpdateChecker(this).getVersion(version -> {
             if (this.getDescription().getVersion().equalsIgnoreCase(version)) {
-                Bukkit.getConsoleSender().sendMessage(TextUtils.format(prefix + "&bEstado de Actualización: &aVersión más reciente."));
+                Bukkit.getConsoleSender().sendMessage(TextUtils.format(prefix + "&bVersión del plugin: &aVersión más reciente instalada."));
             } else {
                 Bukkit.getConsoleSender().sendMessage(TextUtils.format(prefix + "&eNueva versión detectada."));
                 Bukkit.getConsoleSender().sendMessage(TextUtils.format("&7> &aDescarga: &7" + Utils.SPIGOT_LINK));
@@ -632,7 +642,6 @@ public final class Main extends JavaPlugin implements Listener {
             this.endData = new EndDataManager(instance);
 
             if (runningPaperSpigot) {
-
                 getServer().getPluginManager().registerEvents(new PaperListeners(instance), instance);
                 Bukkit.getConsoleSender().sendMessage(TextUtils.format(prefix + "&eSe han registrado cambios especiales para &c&lPaperMC&e."));
             }
@@ -684,7 +693,6 @@ public final class Main extends JavaPlugin implements Listener {
     }
 
     protected void registerChanges() {
-
         if (alreadyRegisteredChanges) return;
         alreadyRegisteredChanges = true;
     }
@@ -711,10 +719,10 @@ public final class Main extends JavaPlugin implements Listener {
                 }
             }
 
-            System.out.println("[ERROR] Error al cargar el mundo principal, esto hará que los Death Train no se presenten.");
-            System.out.println("[ERROR] Tan solo ve a config.yml y establece el mundo principal en la opción: MainWorld");
-            System.out.println("[INFO] El plugin utilizará el mundo " + world.getName() + " como mundo principal.");
-            System.out.println("[INFO] Si deseas utilizar otro mundo, configura en el archivo config.yml.");
+            PDCLog.getInstance().log("[ERROR] Error al cargar el mundo principal, esto hará que los Death Train no se presenten.", true);
+            PDCLog.getInstance().log("[ERROR] Abre el archivo config.yml y establece el mundo principal en la opción: MainWorld", true);
+            PDCLog.getInstance().log("[INFO] El plugin utilizará el mundo " + world.getName() + " como mundo principal.", true);
+            PDCLog.getInstance().log("[INFO] Si deseas utilizar otro mundo, configura en el archivo config.yml.", true);
 
         } else {
             world = Bukkit.getWorld(Objects.requireNonNull(instance.getConfig().getString("Worlds.MainWorld")));
@@ -722,13 +730,13 @@ public final class Main extends JavaPlugin implements Listener {
 
         if (Bukkit.getWorld(Objects.requireNonNull(instance.getConfig().getString("Worlds.EndWorld"))) == null) {
 
-            System.out.println("[ERROR] Error al cargar el mundo del end, esto hará que el end no funcione como debe.");
-            System.out.println("[ERROR] Tan solo ve a config.yml y establece el mundo del end en la opción: EndWorld");
+            PDCLog.getInstance().log("[ERROR] Error al cargar el mundo del end, esto hará que el end no funcione como debe.", true);
+            PDCLog.getInstance().log("[ERROR] Abre el archivo config.yml y establece el mundo del end en la opción: EndWorld", true);
 
             for (World w : Bukkit.getWorlds()) {
                 if (w.getEnvironment() == World.Environment.THE_END) {
                     this.endWorld = world;
-                    System.out.println("[INFO] El plugin utilizará el mundo " + w.getName() + " como mundo del End.");
+                    PDCLog.getInstance().log("[INFO] El plugin utilizará el mundo " + w.getName() + " como mundo del End.", true);
                     break;
                 }
             }
@@ -791,7 +799,7 @@ public final class Main extends JavaPlugin implements Listener {
         getServer().getPluginManager().registerEvents(spawnListener, instance);
         getServer().getPluginManager().registerEvents(new CustomSkeletons(instance), instance);
         getServer().getPluginManager().registerEvents(new PlayerListener(), instance);
-        getServer().getPluginManager().registerEvents(new BlockEvents(), instance);
+        getServer().getPluginManager().registerEvents(new BlockListener(), instance);
         getServer().getPluginManager().registerEvents(new EntityEvents(), instance);
         getServer().getPluginManager().registerEvents(new TotemListener(), instance);
         getServer().getPluginManager().registerEvents(new RaidEvents(), instance);

@@ -2,6 +2,7 @@ package tech.sebazcrc.permadeath.nms.v1_20_R1;
 
 import net.minecraft.core.BlockPos;
 import net.minecraft.server.level.ServerLevel;
+import net.minecraft.world.entity.Mob;
 import net.minecraft.world.entity.MobSpawnType;
 import net.minecraft.world.entity.ai.attributes.Attributes;
 import org.bukkit.Location;
@@ -34,7 +35,7 @@ public class NMSHandlerImpl implements NMSHandler {
     }
 
     @Override
-    public Object convertBukkitToNMS(EntityType type) {
+    public net.minecraft.world.entity.EntityType<?> convertBukkitToNMS(EntityType type) {
         if (type == EntityType.IRON_GOLEM) {
             return net.minecraft.world.entity.EntityType.IRON_GOLEM;
         }
@@ -264,7 +265,7 @@ public class NMSHandlerImpl implements NMSHandler {
     public Entity spawnNMSEntity(String className, EntityType type, Location location, CreatureSpawnEvent.SpawnReason reason) {
         if ((type != EntityType.BAT && type != EntityType.COD && type != EntityType.SALMON && type != EntityType.SQUID && type != EntityType.PUFFERFISH && type != EntityType.TROPICAL_FISH)
                         || (reason != CreatureSpawnEvent.SpawnReason.SPAWNER_EGG || Math.random() <= 0.02004008016)) {
-            net.minecraft.world.entity.EntityType<?> nms = (net.minecraft.world.entity.EntityType<?>) convertBukkitToNMS(type);
+            net.minecraft.world.entity.EntityType<?> nms = convertBukkitToNMS(type);
             return nms.spawn(((CraftWorld) Objects.requireNonNull(location.getWorld())).getHandle(), new BlockPos(location.getBlockX(), location.getBlockY(), location.getBlockZ()), MobSpawnType.NATURAL, reason).getBukkitEntity();
         }
         return null;

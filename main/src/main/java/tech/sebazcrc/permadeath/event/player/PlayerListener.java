@@ -34,8 +34,8 @@ import tech.sebazcrc.permadeath.util.item.PermadeathItems;
 import tech.sebazcrc.permadeath.util.lib.HiddenStringUtils;
 import tech.sebazcrc.permadeath.util.lib.ItemBuilder;
 import tech.sebazcrc.permadeath.util.lib.UpdateChecker;
-import tech.sebazcrc.permadeath.util.manager.Data.EndDataManager;
-import tech.sebazcrc.permadeath.util.manager.Data.PlayerDataManager;
+import tech.sebazcrc.permadeath.data.EndDataManager;
+import tech.sebazcrc.permadeath.data.PlayerDataManager;
 import tech.sebazcrc.permadeath.util.TextUtils;
 import tech.sebazcrc.permadeath.discord.DiscordPortal;
 
@@ -556,13 +556,15 @@ public class PlayerListener implements Listener {
                 e.getPlayer().teleport(Main.instance.world.getSpawnLocation());
             }
 
-            if (!Main.instance.getBeData().generatedOverWorldBeginningPortal()) {
-                Main.instance.getBeginningManager().generatePortal(true, null);
-            }
+            if (Main.worldEditFound) {
+                if (!Main.instance.getBeData().generatedOverWorldBeginningPortal()) {
+                    Main.instance.getBeginningManager().generatePortal(true, null);
+                }
 
-            if (!Main.instance.getBeData().generatedBeginningPortal()) {
-                Main.instance.getBeginningManager().generatePortal(false, new Location(Main.instance.getBeginningManager().getBeginningWorld(), 50, 140, 50));
-                Main.instance.getBeginningManager().getBeginningWorld().setSpawnLocation(new Location(Main.instance.getBeginningManager().getBeginningWorld(), 50, 140, 50));
+                if (!Main.instance.getBeData().generatedBeginningPortal()) {
+                    Main.instance.getBeginningManager().generatePortal(false, new Location(Main.instance.getBeginningManager().getBeginningWorld(), 50, 140, 50));
+                    Main.instance.getBeginningManager().getBeginningWorld().setSpawnLocation(new Location(Main.instance.getBeginningManager().getBeginningWorld(), 50, 140, 50));
+                }
             }
         }
     }

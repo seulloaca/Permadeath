@@ -1,6 +1,7 @@
 package tech.sebazcrc.permadeath;
 
 import org.bukkit.*;
+import org.bukkit.block.BlockFace;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
@@ -11,17 +12,17 @@ import org.bukkit.inventory.ItemFlag;
 import org.bukkit.persistence.PersistentDataType;
 import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
-import tech.sebazcrc.permadeath.data.Language;
 import tech.sebazcrc.permadeath.util.NMS;
 import tech.sebazcrc.permadeath.util.item.InfernalNetherite;
 import tech.sebazcrc.permadeath.util.item.NetheriteArmor;
 import tech.sebazcrc.permadeath.util.item.PermadeathItems;
 import tech.sebazcrc.permadeath.util.lib.ItemBuilder;
-import tech.sebazcrc.permadeath.util.manager.Data.DateManager;
-import tech.sebazcrc.permadeath.util.manager.Data.PlayerDataManager;
+import tech.sebazcrc.permadeath.data.DateManager;
+import tech.sebazcrc.permadeath.data.PlayerDataManager;
 import tech.sebazcrc.permadeath.util.TextUtils;
 import tech.sebazcrc.permadeath.discord.DiscordPortal;
 import tech.sebazcrc.permadeath.util.VersionManager;
+import tech.sebazcrc.permadeath.world.beginning.generator.EmptyGenerator;
 
 import java.time.LocalTime;
 import java.util.Random;
@@ -216,6 +217,11 @@ public class PDCCommand implements CommandExecutor {
                         Main.DEBUG = !Main.DEBUG;
                         player.sendMessage("Debug cambiado a " + Main.DEBUG);
 
+                    } else if (args[1].equalsIgnoreCase("emptyWorld")) {
+                        World w = new WorldCreator("empty_world").generator(new EmptyGenerator()).createWorld();
+                        w.setSpawnLocation(w.getBlockAt(0, 201, 0).getLocation());
+                        w.getSpawnLocation().getBlock().getRelative(BlockFace.DOWN).setType(Material.GLASS);
+                        p.teleport(w.getSpawnLocation());
                     } else if (args[1].equalsIgnoreCase("module")) {
                         NMS.spawnDeathModule(p.getLocation());
                     } else if (args[1].equalsIgnoreCase("health")) {

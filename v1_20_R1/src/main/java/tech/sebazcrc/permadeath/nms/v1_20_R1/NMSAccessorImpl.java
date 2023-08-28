@@ -48,8 +48,6 @@ public class NMSAccessorImpl implements NMSAccessor {
     @SuppressWarnings("unchecked")
     public void registerAttribute(Attribute a, double value, LivingEntity who) {
         net.minecraft.world.entity.LivingEntity e = ((CraftLivingEntity) who).getHandle();
-        if (!(e instanceof Mob)) return;
-
         net.minecraft.world.entity.ai.attributes.Attribute serverAttribute = bukkitToNMSAttribute(a);
         try {
             AttributeInstance attributeModifiable = new AttributeInstance(serverAttribute, AttributeInstance::getAttribute);
@@ -58,9 +56,7 @@ public class NMSAccessorImpl implements NMSAccessor {
             map.put(serverAttribute, attributeModifiable);
 
             ATTRIBUTE_MAP_FIELD.set(e.getAttributes(), map);
-        } catch (IllegalArgumentException ignored) {} catch (IllegalAccessException ex) {
-            throw new RuntimeException(ex);
-        }
+        } catch (IllegalArgumentException | IllegalAccessException ignored) {}
 
         e.getAttribute(serverAttribute).setBaseValue(value);
     }

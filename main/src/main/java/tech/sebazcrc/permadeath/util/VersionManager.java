@@ -25,7 +25,7 @@ public class VersionManager {
         return minecraftVersion != null;
     }
 
-    public static String getFormattedVersion() { //1_16_R2
+    public static String getFormattedVersion() {
         return minecraftVersion.getFormattedName();
     }
 

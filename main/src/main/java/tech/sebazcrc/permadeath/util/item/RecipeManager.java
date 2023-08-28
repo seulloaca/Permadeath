@@ -1,4 +1,4 @@
-package tech.sebazcrc.permadeath.util.manager;
+package tech.sebazcrc.permadeath.util.item;
 
 import org.bukkit.Bukkit;
 import org.bukkit.Material;

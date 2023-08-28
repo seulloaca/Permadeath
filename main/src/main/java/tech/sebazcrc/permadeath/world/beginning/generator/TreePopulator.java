@@ -4,9 +4,6 @@ import org.bukkit.*;
 import org.bukkit.block.data.BlockData;
 import org.bukkit.generator.BlockPopulator;
 import org.jetbrains.annotations.NotNull;
-
-import java.util.Collections;
-import java.util.HashSet;
 import java.util.Random;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;

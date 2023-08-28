@@ -18,13 +18,13 @@ import org.bukkit.event.player.PlayerBucketFillEvent;
 import org.bukkit.inventory.ItemStack;
 import tech.sebazcrc.permadeath.Main;
 import tech.sebazcrc.permadeath.util.item.PermadeathItems;
-import tech.sebazcrc.permadeath.util.manager.Data.EndDataManager;
+import tech.sebazcrc.permadeath.data.EndDataManager;
 import tech.sebazcrc.permadeath.util.TextUtils;
 
 import java.util.Arrays;
 import java.util.List;
 
-public class BlockEvents implements Listener {
+public class BlockListener implements Listener {
     public static final List<ItemStack> NO_DAMAGE_TOOLS = Arrays.asList(PermadeathItems.craftNetheriteAxe(), PermadeathItems.craftNetheriteShovel(), PermadeathItems.craftNetheriteSword(), PermadeathItems.craftNetheritePickaxe(), PermadeathItems.craftNetheriteHoe());
 
     @EventHandler(priority = EventPriority.MONITOR)

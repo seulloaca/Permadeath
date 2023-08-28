@@ -12,8 +12,9 @@
         <module>main</module>
         <module>api</module>
         <module>v1_15_R1</module>
-        <module>dist</module>
+        <module>v1_16_R3</module>
         <module>v1_20_R1</module>
+        <module>dist</module>
     </modules>
 
     <properties>
@@ -24,6 +25,13 @@
         <maven.compiler.target>8</maven.compiler.target>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     </properties>
+
+    <repositories>
+        <repository>
+            <id>jitpack.io</id>
+            <url>https://jitpack.io</url>
+        </repository>
+    </repositories>
 
     <dependencies>
         <dependency>

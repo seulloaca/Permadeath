@@ -4,6 +4,7 @@ import com.sk89q.worldedit.EditSession;
 import com.sk89q.worldedit.WorldEdit;
 import com.sk89q.worldedit.WorldEditException;
 import com.sk89q.worldedit.bukkit.BukkitAdapter;
+import com.sk89q.worldedit.bukkit.BukkitWorld;
 import com.sk89q.worldedit.extent.clipboard.Clipboard;
 import com.sk89q.worldedit.extent.clipboard.io.ClipboardFormat;
 import com.sk89q.worldedit.extent.clipboard.io.ClipboardFormats;
@@ -14,6 +15,7 @@ import com.sk89q.worldedit.math.BlockVector3;
 import com.sk89q.worldedit.session.ClipboardHolder;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
+import org.bukkit.World;
 import tech.sebazcrc.permadeath.Main;
 
 import java.io.File;
@@ -21,8 +23,85 @@ import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.Random;
+import java.util.SplittableRandom;
 
 public class WorldEditPortal {
+
+    public static void generateIsland(World world, int x, int z, int height, SplittableRandom random) {
+        Clipboard clipboard;
+        File file;
+
+        switch (random.nextInt(6)) {
+            case 0:
+                file = new File(Main.getInstance().getDataFolder(), "schematics/island1.schem");
+                break;
+            case 1:
+                file = new File(Main.getInstance().getDataFolder(), "schematics/island2.schem");
+                break;
+            case 2:
+                file = new File(Main.getInstance().getDataFolder(), "schematics/island3.schem");
+                break;
+            case 3:
+                file = new File(Main.getInstance().getDataFolder(), "schematics/island4.schem");
+                break;
+            default:
+                file = new File(Main.getInstance().getDataFolder(), "schematics/island5.schem");
+                break;
+        }
+
+        ClipboardFormat format = ClipboardFormats.findByFile(file);
+
+        assert format != null;
+
+        try (ClipboardReader reader = format.getReader(new FileInputStream(file))) {
+            clipboard = reader.read();
+        } catch (IOException e) {
+            e.printStackTrace();
+            return;
+        }
+
+        try (EditSession editSession = WorldEdit.getInstance().getEditSessionFactory().getEditSession(new BukkitWorld(world), -1)) {
+            Operation operation = new ClipboardHolder(clipboard)
+                    .createPaste(editSession)
+                    .to(BlockVector3.at(x, height + 20, z))
+                    .ignoreAirBlocks(true)
+                    .build();
+            Operations.complete(operation);
+        } catch (WorldEditException e) {
+            e.printStackTrace();
+        }
+    }
+
+    public static void generateYtic(World world, int x, int z, int height) {
+        Clipboard clipboard;
+        File file = new File(Main.getInstance().getDataFolder(), "schematics/ytic.schem");
+
+        ClipboardFormat format = ClipboardFormats.findByFile(file);
+
+        assert format != null;
+        try (ClipboardReader reader = format.getReader(new FileInputStream(file))) {
+            clipboard = reader.read();
+        } catch (IOException e) {
+            e.printStackTrace();
+            return;
+        }
+
+        try (EditSession editSession = WorldEdit.getInstance().getEditSessionFactory().getEditSession(new BukkitWorld(world), -1)) {
+            ClipboardHolder clipboardHolder = new ClipboardHolder(clipboard);
+
+            Operation operation = clipboardHolder
+                    .createPaste(editSession)
+                    .to(BlockVector3.at(x, height + 34, z))
+                    .ignoreAirBlocks(true)
+                    .copyEntities(true)
+                    .build();
+
+            Operations.complete(operation);
+            //editSession.replaceBlocks(
+        } catch (WorldEditException e) {
+            e.printStackTrace();
+        }
+    }
     public static void generatePortal(boolean overworld, Location to) {
 
         if (!Main.getInstance().getBeData().generatedOverWorldBeginningPortal() && overworld) {

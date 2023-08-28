@@ -1,7 +1,6 @@
 package tech.sebazcrc.permadeath.api;
 
-import net.minecraft.world.entity.EntityLiving;
-import tech.sebazcrc.permadeath.util.manager.Data.DateManager;
+import tech.sebazcrc.permadeath.data.DateManager;
 
 public class PermadeathAPI {
     public static long getDay() {

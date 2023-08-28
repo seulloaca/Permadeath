@@ -1,5 +1,6 @@
-package tech.sebazcrc.permadeath.util.manager.Log;
+package tech.sebazcrc.permadeath.util.log;
 
+import org.bukkit.Bukkit;
 import tech.sebazcrc.permadeath.Main;
 
 import java.io.BufferedWriter;
@@ -34,11 +35,18 @@ public class PDCLog {
     }
 
     public void log(String log) {
+        log(log, false);
+    }
 
+    public void log(String log, boolean print) {
         LocalDate date = LocalDate.now();
         LocalDateTime time = LocalDateTime.now();
+        String message = String.format("[%02d/%02d/%02d] ", date.getDayOfMonth(), date.getMonthValue(), date.getYear()) + String.format("%02d:%02d:%02d ", time.getHour(), time.getMinute(), time.getSecond()) + log + "\n";
 
-        add(String.format("[%02d/%02d/%02d] ", date.getDayOfMonth(), date.getMonthValue(), date.getYear()) + String.format("%02d:%02d:%02d ", time.getHour(), time.getMinute(), time.getSecond()) + log + "\n");
+        add(message);
+        if (print) {
+            Bukkit.getConsoleSender().sendMessage(message);
+        }
     }
 
     private void add(String msg) {

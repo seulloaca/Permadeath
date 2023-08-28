@@ -1,4 +1,4 @@
-package tech.sebazcrc.permadeath.util.manager;
+package tech.sebazcrc.permadeath.util;
 
 import org.bukkit.Location;
 import org.bukkit.World;
@@ -65,35 +65,13 @@ public class EntityTeleport {
         double y = locY + (double) (this.random.nextInt(64) - 32);
         double z = locZ + (this.random.nextDouble() - 0.5D) * 64.0D;
 
-        //BlockActuallyPosition act = new BlockActuallyPosition(this.world.getBlockAt((int)x, (int)y, (int)z));
         Block b = this.world.getBlockAt((int) x, (int) y, (int) z);
 
         while (b.getY() > 0 && b.getType().isAir()) b = b.getRelative(BlockFace.DOWN);
-        //act = act.goDeeper();
 
         if (b.getY() <= 0) return false;
 
         return this.c.teleport(new Location(this.world, x, b.getY() + 1, z));
     }
-
-    /**
-     private class BlockActuallyPosition {
-
-     private Block block;
-
-     public BlockActuallyPosition(Block start) {
-     this.block = start;
-     }
-
-     public BlockActuallyPosition goDeeper() {
-     this.block = this.block.getRelative(BlockFace.DOWN);
-     return this;
-     }
-
-     public Block getBlock() {
-     return block;
-     }
-     }
-     */
 }
 

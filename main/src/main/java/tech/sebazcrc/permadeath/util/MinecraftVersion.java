@@ -2,6 +2,7 @@ package tech.sebazcrc.permadeath.util;
 
 public enum MinecraftVersion {
     v1_15_R1,
+    v1_16_R3,
     v1_20_R1;
 
     private static final String REVISION_PATTERN = "_R\\d";

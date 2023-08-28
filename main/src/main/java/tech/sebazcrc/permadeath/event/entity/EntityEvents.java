@@ -12,8 +12,8 @@ import org.bukkit.persistence.PersistentDataType;
 import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
 import tech.sebazcrc.permadeath.Main;
-import tech.sebazcrc.permadeath.util.manager.Data.PlayerDataManager;
-import tech.sebazcrc.permadeath.util.manager.EntityTeleport;
+import tech.sebazcrc.permadeath.data.PlayerDataManager;
+import tech.sebazcrc.permadeath.util.EntityTeleport;
 
 import java.util.concurrent.ThreadLocalRandom;
 
